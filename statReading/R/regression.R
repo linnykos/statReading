@@ -59,3 +59,20 @@ population_ols <- function(mat, betalim, spacing = 500){
   idx <- which.min(risk_vec)
   betaseq[idx]
 }
+
+#assumes population sd is 1
+population_ols_kl <- function(mat, betalim, spacing = 500){
+  betaseq <- seq(betalim[1], betalim[2], length.out = spacing)
+  xseq <- as.numeric(colnames(mat)); yseq <- as.numeric(rownames(mat))
+  vec <- as.numeric(mat)
+  grid <- expand.grid(xseq, yseq)
+
+  risk_vec <- sapply(betaseq, function(beta){
+    #compute the new grid
+    mle_vec <- sapply(grid[,1]*beta - grid[,2], dnorm)
+    log(vec/mle_vec)%*%vec
+  })
+
+  idx <- which.min(risk_vec)
+  betaseq[idx]
+}
