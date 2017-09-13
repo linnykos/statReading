@@ -1,14 +1,14 @@
 {
     "collab_server" : "",
-    "contents" : "density_func <- function(x,y){\n  stats::dnorm(x)*stats::dnorm(y)\n}\n\nxlim <- c(-5, 5); ylim <- c(-5, 5)\nmat <- create_prob_grid(xlim, ylim, density_func)\nplot_grid(mat)\n",
+    "contents" : "rm(list=ls())\ndensity_func <- function(x,y){\n  mvtnorm::dmvnorm(c(x,y), mean = c(-1,1), sigma = matrix(c(2,-1,-1,2),2,2))\n}\n\nxlim <- c(-5, 5); ylim <- c(-5, 5)\nmat <- create_prob_grid(xlim, ylim, density_func)\nplot_grid(mat, asp = T)\n\ndat <- sample_from_grid(mat)\ngraphics::points(dat, pch = 16)\nres <- ols(dat)\n\nplot_ols(res, xlim, lwd = 2)\n",
     "created" : 1505328613465.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "1455485274",
+    "hash" : "2409350068",
     "id" : "A79B6F2C",
-    "lastKnownWriteTime" : 1505329533,
-    "last_content_update" : 1505329533195,
+    "lastKnownWriteTime" : 1505330699,
+    "last_content_update" : 1505330699453,
     "path" : "~/Dropbox/random/statReading/main/regression_demo.R",
     "project_path" : null,
     "properties" : {
