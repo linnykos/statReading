@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "create_prob_grid <- function(xlim, ylim, density_func, grid_size = 200){\n  xseq <- seq(xlim[1], xlim[2], length.out = grid_size)\n  yseq <- seq(ylim[1], ylim[2], length.out = grid_size)\n\n  mat <- sapply(yseq, function(y){ sapply(xseq, function(x){density_func(x,y)})})\n  rownames(mat) <- yseq; colnames(mat) <- xseq\n  mat\n}\n\nplot_grid <- function(mat, type = c(\"contour\"), alpha = 0.5, nlevels = 10, ...){\n  xseq <- as.numeric(colnames(mat)); yseq <- as.numeric(rownames(mat))\n\n  image(xseq, yseq, mat, col = grDevices::heat.colors(100, alpha = alpha))\n  contour(xseq, yseq, mat, nlevels = nlevels, add = T, ...)\n}\n\nclockwise90 <- function(mat) { t(mat[nrow(mat):1,]) }\n",
+    "created" : 1505328606835.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3960471853",
+    "id" : "E5C9099D",
+    "lastKnownWriteTime" : 1505329604,
+    "last_content_update" : 1505329604115,
+    "path" : "~/Dropbox/random/statReading/statReading/R/regression.R",
+    "project_path" : "R/regression.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

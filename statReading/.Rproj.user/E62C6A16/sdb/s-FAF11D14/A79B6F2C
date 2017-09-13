@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "density_func <- function(x,y){\n  stats::dnorm(x)*stats::dnorm(y)\n}\n\nxlim <- c(-5, 5); ylim <- c(-5, 5)\nmat <- create_prob_grid(xlim, ylim, density_func)\nplot_grid(mat)\n",
+    "created" : 1505328613465.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1455485274",
+    "id" : "A79B6F2C",
+    "lastKnownWriteTime" : 1505329533,
+    "last_content_update" : 1505329533195,
+    "path" : "~/Dropbox/random/statReading/main/regression_demo.R",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
