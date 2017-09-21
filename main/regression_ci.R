@@ -73,3 +73,5 @@ res_linear <- sapply(1:trials, function(trial){
   if(any(is.na(res))) print(paste0("Error in trial ", trial))
   res
 })
+
+save.image("../main/regression_ci_results.RData")
