@@ -15,7 +15,7 @@ for(i in 1:d){
   xnoti <- X[,-i]; xi <- X[,i]
   fit <- stats::lm(xi ~ xnoti)
   vec <- as.numeric(fit$residuals)
-  coef2[i] <- y %*% vec/(n-1) #i think this is n-1 since when I used "sd" in standardize, it divides by n-1
+  coef2[i] <- stats::cor(y, vec)
 }
 
 all(sum(abs(coef1 - coef2)) < 1e-6)
