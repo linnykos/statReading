@@ -7,12 +7,15 @@ X <- standardize(X)
 
 fit <- stats::lm(y ~ X - 1)
 coef1 <- stats::coef(fit)
+#coef1 <- as.numeric(solve(t(X)%*%X)%*%t(X)%*%y)
 
-d <- ncol(X)
+d <- ncol(X); n <- nrow(X)
 coef2 <- rep(NA, d)
 for(i in 1:d){
   xnoti <- X[,-i]; xi <- X[,i]
   fit <- stats::lm(xi ~ xnoti)
   vec <- as.numeric(fit$residuals)
-  coef2[i] <- y %*% vec
+  coef2[i] <- y %*% vec/(n-1) #i think this is n-1 since when I used "sd" in standardize, it divides by n-1
 }
+
+all(sum(abs(coef1 - coef2)) < 1e-6)
