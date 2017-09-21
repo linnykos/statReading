@@ -7,6 +7,7 @@ create_prob_grid <- function(xlim, ylim, density_func, grid_size = 200, cores = 
     mat <- sapply(yseq, function(y){ sapply(xseq, function(x){density_func(x,y)})})
   } else {
     doMC::registerDoMC(cores = cores)
+
     grid <- expand.grid(xseq, yseq)
     func <- function(i){density_func(grid[i,1], grid[i,2])}
 
@@ -36,7 +37,7 @@ sample_from_grid <- function(mat, n = 50){
 
   dat <- sapply(idx, function(i){
     x <- ifelse(i %% h == 0, h, i %% h)
-    y <- floor(i/h)
+    y <- ceiling(i/h)
     c(xseq[x],yseq[y])
   })
 
@@ -74,7 +75,7 @@ population_ols <- function(mat, betalim, spacing = 500){
 population_regression <- function(mat){
   xseq <- as.numeric(colnames(mat)); yseq <- as.numeric(rownames(mat))
   yvec <- sapply(1:length(xseq), function(i){
-    yseq%*%mat[,i]/sum(mat[,i])
+    yseq%*%mat[i,]/sum(mat[i,])
   })
 
   cbind(xseq, yvec)
@@ -98,7 +99,7 @@ population_ols_kl <- function(mat, betalim, spacing = 500){
 }
 
 #sandwich estimate of the variance. sigma here is the sd
-sandwich_variance <- function(res, mat, sigma = 1){
+sandwich_variance <- function(res, dat, sigma = 1){
   x <- dat[,1]; y <- dat[,2]
   residual <- y - res*x
   zbar <- mean(x * residual)
@@ -108,9 +109,9 @@ sandwich_variance <- function(res, mat, sigma = 1){
 }
 
 #variance of the fixed
-fixed_variance <- function(mat, sigma = 1){
+fixed_variance <- function(dat, sigma = 1){
   x <- dat[,1]
-  sigma*1/sum(x^2)
+  sigma/sum(x^2)
 }
 
 error_correlation <- function(mat){

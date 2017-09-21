@@ -41,3 +41,72 @@ test_that("create_prob_grid works with cores", {
 
   expect_true(sum(abs(mat - mat2)) < 1e-6)
 })
+
+test_that("create_prob_grid passes a manual inspection", {
+  density_func_linear_closure <- function(vec){
+    stopifnot(length(vec) == 1)
+
+    function(x,y){
+      stats::dnorm(y-vec*x)
+    }
+  }
+  density_func <- density_func_linear_closure(0.5)
+
+  xlim <- c(-5, 5); ylim <- c(-5, 5)
+  mat <- create_prob_grid(xlim, ylim, density_func, grid_size = 50, cores = 3)
+
+  manual_mat <- matrix(NA, nrow = nrow(mat), ncol = ncol(mat))
+  xseq <- as.numeric(colnames(mat)); yseq <- as.numeric(rownames(mat))
+
+  for(i in 1:length(yseq)){
+    for(j in 1:length(xseq)){
+      manual_mat[i,j] <- stats::dnorm(yseq[i] - xseq[j]*.5)
+    }
+  }
+  manual_mat <- manual_mat/sum(manual_mat)
+
+  res1 <- sum(abs(mat - manual_mat))
+  res2 <- sum(abs(mat - t(manual_mat)))
+
+  expect_true(res1 < res2)
+})
+
+##########
+
+## population_regression is correct
+
+test_that("population_regression works", {
+  density_func_linear_closure <- function(vec){
+    stopifnot(length(vec) == 1)
+
+    function(x,y){
+      stats::dnorm(y-vec*x)
+    }
+  }
+  density_func <- density_func_linear_closure(0)
+
+  xlim <- c(-5, 5); ylim <- c(-5, 5)
+  mat <- create_prob_grid(xlim, ylim, density_func, grid_size = 50, cores = 3)
+  reg <- population_regression(mat)
+
+  expect_true(all(dim(reg) == c(50, 2)))
+  expect_true(is.matrix(reg))
+})
+
+test_that("population_regression computes the right curve for a linear function", {
+  density_func_linear_closure <- function(vec){
+    stopifnot(length(vec) == 1)
+
+    function(x,y){
+      stats::dnorm(y-vec*x)
+    }
+  }
+  density_func <- density_func_linear_closure(0.5)
+
+  xlim <- c(-5, 5); ylim <- c(-5, 5)
+  mat <- create_prob_grid(xlim, ylim, density_func, grid_size = 50, cores = 3)
+  reg <- population_regression(mat)
+
+  expect_true(max(abs(reg[,1]*.5 - reg[,2])) < 0.1)
+})
+
