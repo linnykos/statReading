@@ -14,18 +14,18 @@ density_func <- function(x,y){
 
 xlim <- c(-5, 5); ylim <- c(-5, 5)
 mat <- create_prob_grid(xlim, ylim, density_func)
+
 plot_grid(mat, asp = T)
-
-#could've loaded a density from a 2d image...
-
 set.seed(5)
 dat <- sample_from_grid(mat, n = 50)
 graphics::points(dat, pch = 16, col = rgb(0,0,0,0.5))
 res <- ols(dat)
-plot_ols(res, xlim, lwd = 2, lty = 4)
+plot_ols(res, xlim, lwd = 4, lty = 4, col = "blue")
 
 pop_ols <- population_ols(mat, betalim = c(-1,1))
-plot_ols(pop_ols, xlim, lwd = 4, col = "blue")
+plot_ols(pop_ols, xlim, lwd = 4, lty = 4)
 
 population_ols_kl <- population_ols(mat, betalim = c(-1,1))
 
+reg <- population_regression(mat)
+graphics::lines(reg[,1], reg[,2], lwd = 4)

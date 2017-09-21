@@ -60,6 +60,15 @@ population_ols <- function(mat, betalim, spacing = 500){
   betaseq[idx]
 }
 
+population_regression <- function(mat){
+  xseq <- as.numeric(colnames(mat)); yseq <- as.numeric(rownames(mat))
+  yvec <- sapply(1:length(xseq), function(i){
+    yseq%*%mat[,i]/sum(mat[,i])
+  })
+
+  cbind(xseq, yvec)
+}
+
 #assumes population sd is 1
 population_ols_kl <- function(mat, betalim, spacing = 500){
   betaseq <- seq(betalim[1], betalim[2], length.out = spacing)
