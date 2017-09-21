@@ -29,3 +29,20 @@ population_ols_kl <- population_ols(mat, betalim = c(-1,1))
 
 reg <- population_regression(mat)
 graphics::lines(reg[,1], reg[,2], lwd = 4)
+
+sandwich_var <- sandwich_variance(res, mat)
+sandwich_ci <- c(res - 1.96*sqrt(sandwich_var), res + 1.96*sqrt(sandwich_var))
+
+fixed_var <- fixed_variance(mat)
+fixed_ci <- c(res - 1.96*sqrt(fixed_var), res + 1.96*sqrt(fixed_var))
+
+##########
+#checking to see if the errors are uncorrelated
+error_correlation(mat)
+
+#########
+# do a example where the model is correct
+
+
+#########
+# maybe do simulations over randomly generated correct and incorrect models?

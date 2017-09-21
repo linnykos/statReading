@@ -85,3 +85,34 @@ population_ols_kl <- function(mat, betalim, spacing = 500){
   idx <- which.min(risk_vec)
   betaseq[idx]
 }
+
+#sandwich estimate of the variance. sigma here is the sd
+sandwich_variance <- function(res, mat, sigma = 1){
+  x <- dat[,1]; y <- dat[,2]
+  residual <- y - res*x
+  zbar <- mean(x * residual)
+  numerator <- mean((x*residual - zbar)^2)/(4*sigma^4)
+  denominator <- -mean(x^2)/(2*sigma^2)
+  numerator/denominator^2
+}
+
+#variance of the fixed
+fixed_variance <- function(mat, sigma = 1){
+  x <- dat[,1]
+  sigma*1/sum(x^2)
+}
+
+error_correlation <- function(mat){
+  xseq <- as.numeric(colnames(mat)); yseq <- as.numeric(rownames(mat))
+
+  reg <- population_regression(mat)
+
+  vec <- sapply(1:length(xseq), function(i){
+    x <- reg[i,1]; yx <- reg[i,2]
+    tmp <- sapply(1:length(yseq), function(j){
+      (yseq[j] - yx)*mat[i,j]
+    })
+    sum(tmp)
+  })
+  sum(vec)
+}
