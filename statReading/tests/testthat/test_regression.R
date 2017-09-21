@@ -58,9 +58,9 @@ test_that("create_prob_grid passes a manual inspection", {
   manual_mat <- matrix(NA, nrow = nrow(mat), ncol = ncol(mat))
   xseq <- as.numeric(colnames(mat)); yseq <- as.numeric(rownames(mat))
 
-  for(i in 1:length(yseq)){
-    for(j in 1:length(xseq)){
-      manual_mat[i,j] <- stats::dnorm(yseq[i] - xseq[j]*.5)
+  for(i in 1:length(xseq)){
+    for(j in 1:length(yseq)){
+      manual_mat[i,j] <- stats::dnorm(yseq[j] - xseq[i]*.5)
     }
   }
   manual_mat <- manual_mat/sum(manual_mat)
@@ -108,5 +108,50 @@ test_that("population_regression computes the right curve for a linear function"
   reg <- population_regression(mat)
 
   expect_true(max(abs(reg[,1]*.5 - reg[,2])) < 0.1)
+})
+
+##################
+
+## error_correlation is correct
+
+
+test_that("error_correlation works", {
+  density_func <- function(x,y){
+    val1 <- mvtnorm::dmvnorm(c(x,y), mean = c(-2,2), sigma = 2*matrix(c(2,-1,-1,2),2,2))
+    val2 <- mvtnorm::dmvnorm(c(x,y), mean = c(-1.8,1.8), sigma = 2*matrix(c(2,1,1,2),2,2))
+    val3 <- mvtnorm::dmvnorm(c(x,y), mean = c(3,-3), sigma = matrix(c(3,.2,.2,3),2,2))
+    val4 <- mvtnorm::dmvnorm(c(x,y), mean = c(2,-2), sigma = matrix(c(3,-2,-2,3),2,2))
+    val5x <- stats::dnorm(x, mean = -2)
+    val5y <- stats::dnorm(x^2-3-2*y)
+
+    0.4*val1 + 2*val2 + 0.3*val3 + 0.3*val4 + 0.5*val5x*val5y
+  }
+
+  xlim <- c(-5, 5); ylim <- c(-5, 5)
+  mat <- create_prob_grid(xlim, ylim, density_func, grid_size = 50, cores = 3)
+  res <- error_correlation(mat)
+
+  expect_true(is.numeric(res))
+  expect_true(length(res) == 1)
+})
+
+
+test_that("error_correlation computes 0 for linear function", {
+  density_func <- function(x,y){
+    val1 <- mvtnorm::dmvnorm(c(x,y), mean = c(-2,2), sigma = 2*matrix(c(2,-1,-1,2),2,2))
+    val2 <- mvtnorm::dmvnorm(c(x,y), mean = c(-1.8,1.8), sigma = 2*matrix(c(2,1,1,2),2,2))
+    val3 <- mvtnorm::dmvnorm(c(x,y), mean = c(3,-3), sigma = matrix(c(3,.2,.2,3),2,2))
+    val4 <- mvtnorm::dmvnorm(c(x,y), mean = c(2,-2), sigma = matrix(c(3,-2,-2,3),2,2))
+    val5x <- stats::dnorm(x, mean = -2)
+    val5y <- stats::dnorm(x^2-3-2*y)
+
+    0.4*val1 + 2*val2 + 0.3*val3 + 0.3*val4 + 0.5*val5x*val5y
+  }
+
+  xlim <- c(-5, 5); ylim <- c(-5, 5)
+  mat <- create_prob_grid(xlim, ylim, density_func, grid_size = 50, cores = 3)
+  res <- error_correlation(mat)
+
+  expect_true(abs(res) < 1e-6)
 })
 
