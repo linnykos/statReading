@@ -1,9 +1,20 @@
 #create a density over a grid
-create_prob_grid <- function(xlim, ylim, density_func, grid_size = 200){
+create_prob_grid <- function(xlim, ylim, density_func, grid_size = 200, cores = NA){
   xseq <- seq(xlim[1], xlim[2], length.out = grid_size)
   yseq <- seq(ylim[1], ylim[2], length.out = grid_size)
 
-  mat <- sapply(yseq, function(y){ sapply(xseq, function(x){density_func(x,y)})})
+  if(is.na(cores)){
+    mat <- sapply(yseq, function(y){ sapply(xseq, function(x){density_func(x,y)})})
+  } else {
+    doMC::registerDoMC(cores = cores)
+    grid <- expand.grid(xseq, yseq)
+    func <- function(i){density_func(grid[i,1], grid[i,2])}
+
+    val <- unlist(foreach::"%dopar%"(foreach::foreach(i = 1:nrow(grid)),
+                              func(i)))
+    mat <- matrix(val, nrow = length(yseq), ncol = length(xseq))
+  }
+
   rownames(mat) <- yseq; colnames(mat) <- xseq
   mat/sum(mat)
 }

@@ -13,7 +13,7 @@ density_func <- function(x,y){
 }
 
 xlim <- c(-5, 5); ylim <- c(-5, 5)
-mat <- create_prob_grid(xlim, ylim, density_func)
+mat <- create_prob_grid(xlim, ylim, density_func, cores = 3)
 
 plot_grid(mat, asp = T)
 set.seed(5)
