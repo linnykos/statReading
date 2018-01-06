@@ -1,23 +1,24 @@
 rm(list=ls())
+library(statReading)
 set.seed(10)
 
 density_func <- function(x,y){
-  # val1 <- mvtnorm::dmvnorm(c(x,y), mean = c(-2,2), sigma = 2*matrix(c(2,-1,-1,2),2,2))
-  # val2 <- mvtnorm::dmvnorm(c(x,y), mean = c(-1.8,1.8), sigma = 2*matrix(c(2,1,1,2),2,2))
-  # val3 <- mvtnorm::dmvnorm(c(x,y), mean = c(3,-3), sigma = matrix(c(3,.2,.2,3),2,2))
-  # val4 <- mvtnorm::dmvnorm(c(x,y), mean = c(2,-2), sigma = matrix(c(3,-2,-2,3),2,2))
-  # val5x <- stats::dnorm(x, mean = -2)
-  # val5y <- stats::dnorm(x^2-3-2*y)
-  #
-  # 0.4*val1 + 2*val2 + 0.3*val3 + 0.3*val4 + 0.5*val5x*val5y
+  val1 <- mvtnorm::dmvnorm(c(x,y), mean = c(-2,2), sigma = 2*matrix(c(2,-1,-1,2),2,2))
+  val2 <- mvtnorm::dmvnorm(c(x,y), mean = c(-1.8,1.8), sigma = 2*matrix(c(2,1,1,2),2,2))
+  val3 <- mvtnorm::dmvnorm(c(x,y), mean = c(3,-3), sigma = matrix(c(3,.2,.2,3),2,2))
+  val4 <- mvtnorm::dmvnorm(c(x,y), mean = c(2,-2), sigma = matrix(c(3,-2,-2,3),2,2))
+  val5x <- stats::dnorm(x, mean = -2)
+  val5y <- stats::dnorm(x^2-3-2*y)
 
-  mvtnorm::dmvnorm(c(x,y), mean = c(-2,2), sigma = matrix(c(5, 0, 0, 0.5), 2, 2))
+  0.4*val1 + 2*val2 + 0.3*val3 + 0.3*val4 + 0.5*val5x*val5y
 }
 
 xlim <- c(-5, 5); ylim <- c(-5, 5)
-mat <- create_prob_grid(xlim, ylim, density_func, cores = 3)
+mat <- create_prob_grid(xlim, ylim, density_func, grid_size = 100, cores = 3)
 
-plot_grid(mat, asp = T)
+pdf("figure.pdf", 3, 3)
+graphics::par(mar = rep(0, 4))
+plot_grid(mat, asp = T, xlab = "", ylab = "", xaxt = "n", yaxt = "n", bty = "n")
 set.seed(5)
 dat <- sample_from_grid(mat, n = 50)
 graphics::points(dat, pch = 16, col = rgb(0,0,0,0.5))
@@ -29,3 +30,4 @@ plot_ols(pop_ols, xlim, lwd = 4, lty = 4)
 
 reg <- population_regression(mat)
 graphics::lines(reg[,1], reg[,2], lwd = 4, col = 3)
+graphics.off()
